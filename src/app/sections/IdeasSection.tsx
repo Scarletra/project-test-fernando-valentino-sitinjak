@@ -64,7 +64,7 @@ const ListPost = () => {
   return (
     <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
-        <div className="bg-white p-4 mb-4">
+        <div className=" p-4 mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
             <div className="flex items-center gap-4">
@@ -83,7 +83,7 @@ const ListPost = () => {
                   <select
                     value={showPerPage}
                     onChange={(e) => handleShowPerPageChange(Number(e.target.value))}
-                    className="appearance-none bg-white border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none  border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value={10}>10</option>
                     <option value={20}>20</option>
@@ -102,7 +102,7 @@ const ListPost = () => {
                   <select
                     value={sortBy}
                     onChange={(e) => handleSortChange(e.target.value)}
-                    className="appearance-none bg-white border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none  border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="newest">Newest</option>
                     <option value="oldest">Oldest</option>
@@ -135,7 +135,7 @@ const ListPost = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="bg-white p-4 flex justify-center items-center">
+          <div className=" p-4 flex justify-center items-center">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               {/* Pagination controls */}
               <div className="flex items-center justify-center sm:justify-start gap-1">
