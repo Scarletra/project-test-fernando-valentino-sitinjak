@@ -71,14 +71,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </div>
         </div>
 
-        {/* Content - Setengah tinggi card sisanya (h-35) */}
         <div className="p-4 h-35 flex flex-col">
-          {/* Tanggal */}
           <div className="text-sm text-gray-500 mb-2">
             {formatDate(post.date)}
           </div>
 
-          {/* Title - Maksimal 3 baris dengan ellipsis */}
           <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-3 leading-tight">
             {post.title}
           </h3>
