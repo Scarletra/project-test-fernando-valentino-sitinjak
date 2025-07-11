@@ -137,18 +137,14 @@ const ListPost = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex justify-center items-center">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="text-sm text-gray-600 sm:hidden">
-                Page {currentPage} of {totalPages}
-              </div>
-
               {/* Pagination controls */}
-              <div className="flex items-center justify-center sm:justify-start gap-2">
+              <div className="flex items-center justify-center sm:justify-start gap-1">
                 <button
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
-                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   title="First page"
                 >
                   <ChevronsLeft className="h-4 w-4" />
@@ -157,14 +153,14 @@ const ListPost = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   title="Previous page"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
 
                 {/* Page numbers */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {generatePaginationNumbers().map((page, index) => (
                     <button
                       key={index}
@@ -183,7 +179,7 @@ const ListPost = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   title="Next page"
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -192,7 +188,7 @@ const ListPost = () => {
                 <button
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
-                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-2 text-sm text-black cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   title="Last page"
                 >
                   <ChevronsRight className="h-4 w-4" />
