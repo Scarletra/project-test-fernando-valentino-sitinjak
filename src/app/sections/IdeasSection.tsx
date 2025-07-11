@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import PostCard from '../components/PostCard';
 
 const ListPost = () => {
   const [sortBy, setSortBy] = useState('newest');
@@ -128,8 +129,16 @@ const ListPost = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: showPerPage }, (_, index) => (
-              <div key={index} className="bg-gray-100 rounded-lg p-4 text-center text-gray-600">
-                <p>Mapping card {startItem + index}</p>
+              <div key={index}>
+                <PostCard
+                  post={{
+                    title: `Post Title ${index + 1}`,
+                    excerpt: `This is a brief excerpt for post ${index + 1}.`,
+                    author: `Author ${index + 1}`,
+                    date: `Date ${index + 1}`,
+                    slug: `post-${index + 1}`,
+                  }}
+                />
               </div>
             ))}
           </div>
