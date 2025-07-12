@@ -75,7 +75,7 @@ const Banner: React.FC<BannerProps> = ({
         className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-30"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.6 }}
+        transition={{ duration: 1 }}
       >
         <svg
           className="relative block w-full h-16 md:h-32 lg:h-48"

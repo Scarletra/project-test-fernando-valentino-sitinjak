@@ -2,16 +2,90 @@ import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import PostCard from '../components/PostCard';
 
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  slug: string;
+  image?: {
+    small_image?: { url: string };
+    medium_image?: { url: string };
+  };
+  published_at: string;
+}
+
+interface ApiResponse {
+  data: Post[];
+  links: {
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
+  };
+  meta: {
+    current_page: number;
+    from: number;
+    last_page: number;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+  };
+}
+
 const ListPost = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showPerPage, setShowPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const totalItems = 156;
-  const totalPages = Math.ceil(totalItems / showPerPage);
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const sortParam = sortBy === 'newest' ? '-published_at' : 'published_at';
+      
+      const params = new URLSearchParams({
+        'page[number]': currentPage.toString(),
+        'page[size]': showPerPage.toString(),
+        'sort': sortParam
+      });
+      
+      params.append('append[]', 'small_image');
+      params.append('append[]', 'medium_image');
+      
+      const response = await fetch(`https://suitmedia-backend.suitdev.com/api/ideas?${params}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data: ApiResponse = await response.json();
+      
+      setPosts(data.data);
+      setTotalItems(data.meta.total);
+      setTotalPages(data.meta.last_page);
+      
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch posts');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    console.log('State updated:', { sortBy, showPerPage, currentPage });
+    fetchPosts();
   }, [sortBy, showPerPage, currentPage]);
 
   const handleSortChange = (newSort: string) => {
@@ -21,7 +95,7 @@ const ListPost = () => {
 
   const handleShowPerPageChange = (newShowPerPage: number) => {
     setShowPerPage(newShowPerPage);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -61,29 +135,45 @@ const ListPost = () => {
   const startItem = (currentPage - 1) * showPerPage + 1;
   const endItem = Math.min(currentPage * showPerPage, totalItems);
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const extractExcerpt = (content: string, maxLength: number = 100) => {
+    const plainText = content.replace(/<[^>]*>/g, '');
+    return plainText.length > maxLength 
+      ? plainText.substring(0, maxLength) + '...'
+      : plainText;
+  };
+
   return (
     <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
-        <div className=" p-4 mb-4">
+        <div className="px-4 py-2">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600">
-                Showing {startItem}-{endItem} of {totalItems}
+                Showing {totalItems > 0 ? startItem : 0}-{endItem} of {totalItems}
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Show per page */}
               <div className="relative flex items-center space-x-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Show per page
+                <label className="block text-sm font-medium text-gray-700">
+                  Show per page:
                 </label>
                 <div className="relative">
                   <select
                     value={showPerPage}
                     onChange={(e) => handleShowPerPageChange(Number(e.target.value))}
-                    className="appearance-none  border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none cursor-pointer border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={loading}
                   >
                     <option value={10}>10</option>
                     <option value={20}>20</option>
@@ -95,14 +185,15 @@ const ListPost = () => {
 
               {/* Sort Dropdown */}
               <div className="relative flex items-center space-x-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sort by
+                <label className="block text-sm font-medium text-gray-700">
+                  Sort by:
                 </label>
                 <div className="relative">
                   <select
                     value={sortBy}
                     onChange={(e) => handleSortChange(e.target.value)}
-                    className="appearance-none  border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none cursor-pointer border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={loading}
                   >
                     <option value="newest">Newest</option>
                     <option value="oldest">Oldest</option>
@@ -111,31 +202,52 @@ const ListPost = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        <div className="p-6 mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: showPerPage }, (_, index) => (
-              <div key={index}>
-                <PostCard
-                  post={{
-                    title: `Post Title ${index + 1}`,
-                    excerpt: `This is a brief excerpt for post ${index + 1}.`,
-                    author: `Author ${index + 1}`,
-                    date: `Date ${index + 1}`,
-                    slug: `post-${index + 1}`,
-                  }}
-                />
-              </div>
-            ))}
-          </div>
+        <div className="py-6 px-4 mb-6">
+          {loading && (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-gray-500">Loading posts...</div>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-red-500">Error: {error}</div>
+            </div>
+          )}
+
+          {!loading && !error && posts.length === 0 && (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-gray-500">No posts found</div>
+            </div>
+          )}
+
+          {!loading && !error && posts.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {posts.map((post) => (
+                <div key={post.id}>
+                  <PostCard
+                    post={{
+                      id: post.id,
+                      title: post.title,
+                      excerpt: extractExcerpt(post.content),
+                      author: 'Admin',
+                      thumbnail: post.image?.medium_image?.url || post.image?.small_image?.url || 'banner-img.png',
+                      date: post.published_at ? formatDate(post.published_at) : '',
+                      slug: post.slug,
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className=" p-4 flex justify-center items-center">
+        {totalPages > 1 && !loading && (
+          <div className="p-4 flex justify-center items-center">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               {/* Pagination controls */}
               <div className="flex items-center justify-center sm:justify-start gap-1">
@@ -192,7 +304,6 @@ const ListPost = () => {
                   <ChevronsRight className="h-4 w-4" />
                 </button>
               </div>
-
             </div>
           </div>
         )}
