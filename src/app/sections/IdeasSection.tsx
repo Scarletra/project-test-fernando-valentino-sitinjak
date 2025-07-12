@@ -4,14 +4,41 @@ import PostCard from '../components/PostCard';
 import { formatDate, extractExcerpt } from '../lib/utils/converter';
 
 const ListPost = () => {
+  
   const [sortBy, setSortBy] = useState('newest');
   const [showPerPage, setShowPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSort = urlParams.get('sort') || 'newest';
+    const urlPerPage = parseInt(urlParams.get('per_page') || '10');
+    const urlPage = parseInt(urlParams.get('page') || '1');
+    
+    setSortBy(urlSort);
+    setShowPerPage(urlPerPage);
+    setCurrentPage(urlPage);
+  }, []);
+
+  const updateURL = (newSortBy: string, newShowPerPage: number, newCurrentPage: number) => {
+    if (!isClient) return;
+    
+    const params = new URLSearchParams();
+    params.set('sort', newSortBy);
+    params.set('per_page', newShowPerPage.toString());
+    params.set('page', newCurrentPage.toString());
+    
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, '', newUrl);
+  };
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -43,21 +70,26 @@ const ListPost = () => {
       const data: ApiResponse = await response.json();
       console.log('Fetched posts:', data);
       
-      setPosts(data.data);
-      setTotalItems(data.meta.total);
-      setTotalPages(data.meta.last_page);
+      setPosts(data.data || []);
+      setTotalItems(data.meta?.total || 0);
+      setTotalPages(data.meta?.last_page || 0);
       
     } catch (err) {
       console.error('Error fetching posts:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch posts');
+      setPosts([]); // Reset posts on error
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (!isClient) return;
+    
     fetchPosts();
-  }, [sortBy, showPerPage, currentPage]);
+    // Update URL whenever state changes
+    updateURL(sortBy, showPerPage, currentPage);
+  }, [sortBy, showPerPage, currentPage, isClient]);
 
   const handleSortChange = (newSort: string) => {
     setSortBy(newSort);
@@ -113,7 +145,11 @@ const ListPost = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600">
-                Showing {totalItems > 0 ? startItem : 0}-{endItem} of {totalItems}
+                {loading ? (
+                  <span>Loading...</span>
+                ) : (
+                  <span>Showing {totalItems > 0 ? startItem : 0}-{endItem} of {totalItems}</span>
+                )}
               </div>
             </div>
 
@@ -162,14 +198,30 @@ const ListPost = () => {
 
         <div className="py-6 px-4 mb-6">
           {loading && (
-            <div className="flex justify-center items-center py-8">
-              <div className="text-gray-500">Loading posts...</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {/* Loading skeleton */}
+              {Array.from({ length: showPerPage }).map((_, index) => (
+                <div key={index} className="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden h-70 w-full">
+                  <div className="h-35 bg-gray-300 animate-pulse"></div>
+                  <div className="p-4 h-35 flex flex-col">
+                    <div className="h-4 bg-gray-300 rounded mb-2 w-24 animate-pulse"></div>
+                    <div className="h-4 bg-gray-300 rounded mb-2 animate-pulse"></div>
+                    <div className="h-4 bg-gray-300 rounded w-3/4 animate-pulse"></div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
           {error && (
-            <div className="flex justify-center items-center py-8">
-              <div className="text-red-500">Error: {error}</div>
+            <div className="flex flex-col justify-center items-center py-8">
+              <div className="text-red-500 mb-4">Error: {error}</div>
+              <button
+                onClick={fetchPosts}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Retry
+              </button>
             </div>
           )}
 
