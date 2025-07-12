@@ -24,9 +24,6 @@ export default function Home() {
         )}
       </div>
 
-      <div>
-        Footer (Tentative~~~~~)
-      </div>
     </div>
   );
 }

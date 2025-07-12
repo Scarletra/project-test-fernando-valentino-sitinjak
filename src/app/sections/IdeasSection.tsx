@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import PostCard from '../components/PostCard';
+import { formatDate, extractExcerpt } from '../lib/utils/converter';
 
 interface Post {
   id: number;
@@ -135,22 +136,6 @@ const ListPost = () => {
   const startItem = (currentPage - 1) * showPerPage + 1;
   const endItem = Math.min(currentPage * showPerPage, totalItems);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const extractExcerpt = (content: string, maxLength: number = 100) => {
-    const plainText = content.replace(/<[^>]*>/g, '');
-    return plainText.length > maxLength 
-      ? plainText.substring(0, maxLength) + '...'
-      : plainText;
-  };
-
   return (
     <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
@@ -172,7 +157,7 @@ const ListPost = () => {
                   <select
                     value={showPerPage}
                     onChange={(e) => handleShowPerPageChange(Number(e.target.value))}
-                    className="appearance-none cursor-pointer border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none cursor-pointer border border-gray-300 rounded-full px-3 py-2 pr-6 md:pr-8 lg:pr-12 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={loading}
                   >
                     <option value={10}>10</option>
@@ -192,7 +177,7 @@ const ListPost = () => {
                   <select
                     value={sortBy}
                     onChange={(e) => handleSortChange(e.target.value)}
-                    className="appearance-none cursor-pointer border border-gray-300 rounded-full px-3 py-2 pr-6 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none cursor-pointer border border-gray-300 rounded-full px-3 py-2 pr-6 md:pr-8 lg:pr-12 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={loading}
                   >
                     <option value="newest">Newest</option>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { formatDateDisplay } from '../lib/utils/converter';
 
 interface PostCardProps {
   post: {
@@ -26,32 +27,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const handleImageLoad = () => {
     setImageLoaded(true);
   };
-
-  const formatDate = (dateString: string) => {
-  if (!dateString) return null;
-
-  const date = new Date(dateString);
-  const isValid = !isNaN(date.getTime());
-
-  if (!isValid) return null;
-
-  const day = date.getDate();
-  const monthIndex = date.getMonth();
-  const year = date.getFullYear();
-
-  if (!day || isNaN(monthIndex) || !year) return null;
-
-  const months = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-  ];
-
-  const month = months[monthIndex]?.toUpperCase();
-  if (!month) return null;
-
-  return `${day} ${month} ${year}`;
-};
-
 
   return (
     <Link href={`/ideas/${post.slug}`} className="block group">
@@ -84,9 +59,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </div>
 
         <div className="p-4 h-35 flex flex-col">
-          {formatDate(post.date) && (
+          {formatDateDisplay(post.date) && (
             <div className="text-sm text-gray-500 mb-2">
-              {formatDate(post.date)}
+              {formatDateDisplay(post.date)}
             </div>
           )}
 
