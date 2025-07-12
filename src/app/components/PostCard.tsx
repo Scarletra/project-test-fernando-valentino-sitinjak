@@ -8,6 +8,18 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  const getImageUrl = () => {
+    if (!post.image || post.image.length === 0) {
+      return null;
+    }
+
+    const originalUrl = post.image;
+
+    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+  };
+
+  const imageUrl = getImageUrl();
+
   const handleImageError = () => {
     setImageError(true);
   };
@@ -28,7 +40,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   <div className="absolute inset-0 bg-gray-300 animate-pulse"></div>
                 )}
                 <img
-                  src={post.image}
+                  src={imageUrl || ''}
                   alt={post.title}
                   loading="lazy"
                   className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
