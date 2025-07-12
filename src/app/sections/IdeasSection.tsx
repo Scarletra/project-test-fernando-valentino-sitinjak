@@ -3,37 +3,6 @@ import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } f
 import PostCard from '../components/PostCard';
 import { formatDate, extractExcerpt } from '../lib/utils/converter';
 
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  slug: string;
-  image?: {
-    small_image?: { url: string };
-    medium_image?: { url: string };
-  };
-  published_at: string;
-}
-
-interface ApiResponse {
-  data: Post[];
-  links: {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  };
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  };
-}
-
 const ListPost = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showPerPage, setShowPerPage] = useState(10);
@@ -72,6 +41,7 @@ const ListPost = () => {
       }
       
       const data: ApiResponse = await response.json();
+      console.log('Fetched posts:', data);
       
       setPosts(data.data);
       setTotalItems(data.meta.total);
@@ -218,8 +188,7 @@ const ListPost = () => {
                       id: post.id,
                       title: post.title,
                       excerpt: extractExcerpt(post.content),
-                      author: 'Admin',
-                      thumbnail: post.image?.medium_image?.url || post.image?.small_image?.url || 'banner-img.png',
+                      image: post.medium_image?.[0]?.url || 'banner-img.png',
                       date: post.published_at ? formatDate(post.published_at) : '',
                       slug: post.slug,
                     }}

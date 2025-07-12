@@ -41,7 +41,7 @@ const Navbar = () => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-100 ease-in-out ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       } ${
         scrolled 

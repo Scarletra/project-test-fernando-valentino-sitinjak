@@ -4,18 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { formatDateDisplay } from '../lib/utils/converter';
 
-interface PostCardProps {
-  post: {
-    id: number;
-    title: string;
-    excerpt: string;
-    thumbnail: string;
-    author: string;
-    date: string;
-    slug: string;
-  };
-}
-
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -40,7 +28,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   <div className="absolute inset-0 bg-gray-300 animate-pulse"></div>
                 )}
                 <img
-                  src={post.thumbnail}
+                  src={post.image}
                   alt={post.title}
                   loading="lazy"
                   className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
@@ -65,7 +53,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             </div>
           )}
 
-          <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-3 leading-tight">
+          <h3 className="text-base font-semibold text-gray-900 transition-colors line-clamp-3 leading-tight">
             {post.title}
           </h3>
         </div>
