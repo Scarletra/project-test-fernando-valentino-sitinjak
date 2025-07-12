@@ -31,11 +31,6 @@ export default function RootLayout({
       >
         <Navbar />
         <main className="pt-16">
-          <Banner
-            backgroundImage="/banner-img.png"
-            title="Ideas"
-            subtitle="Where all our great things begin"
-          />
           {children}
         </main>
       </body>
