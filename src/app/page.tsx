@@ -10,18 +10,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Banner
-        backgroundImage="/banner-img.png"
-        title="Ideas"
-        subtitle="Where all our great things begin"
-      />
-
-      <div>
-        {isIdeasRoute ? (
-          <ListPost />
-        ) : (
-          <ListPost />
-        )}
+      <div className="text-black">
+        Test
       </div>
 
     </div>
